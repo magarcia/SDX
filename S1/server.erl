@@ -10,22 +10,22 @@ start() ->
 process_requests(Clients) ->
     receive
         {client_join_req, Name, From} ->
-            NewClients = [...|Clients],  %% TODO: COMPLETE
+            NewClients = [From|Clients],
             broadcast(NewClients, {join, Name}),
-            process_requests(...);  %% TODO: COMPLETE
+            process_requests(NewClients);
         {client_leave_req, Name, From} ->
-            NewClients = lists:delete(..., Clients),  %% TODO: COMPLETE
-            broadcast(Clients, ...),  %% TODO: COMPLETE
+            NewClients = lists:delete(From, Clients),
+            broadcast(Clients, {leave, Name}),
             From ! exit,
-            process_requests(...);  %% TODO: COMPLETE
+            process_requests(NewClients);
         {send, Name, Text} ->
-            broadcast(..., ...),  %% TODO: COMPLETE
+            broadcast(Clients, {message, Name, Text}),
             process_requests(Clients);
         disconnect ->
             unregister(myserver)
     end.
 
-%% Local Functions 
+%% Local Functions
 broadcast(PeerList, Message) ->
     Fun = fun(Peer) -> Peer ! Message end,
     lists:map(Fun, PeerList).

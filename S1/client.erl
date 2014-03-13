@@ -8,7 +8,7 @@ start(ServerPid, MyName) ->
     process_commands(ServerPid, MyName, ClientPid).
 
 init_client(ServerPid, MyName) ->
-    ServerPid ! {client_join_req, ..., ...},  %% TODO: COMPLETE
+    ServerPid ! {client_join_req, MyName, self()},
     process_requests().
 
 %% Local Functions
@@ -17,14 +17,14 @@ process_requests() ->
     receive
         {join, Name} ->
             io:format("[JOIN] ~s joined the chat~n", [Name]),
-            %% TODO: ADD SOME CODE
+            process_requests();
         {leave, Name} ->
-            %% TODO: ADD SOME CODE
+            io:format("[LEAVE] ~s left the chat~n", [Name]),
             process_requests();
         {message, Name, Text} ->
             io:format("[~s] ~s", [Name, Text]),
-            %% TODO: ADD SOME CODE
-        exit -> 
+            process_requests();
+        exit ->
             ok
     end.
 
@@ -32,11 +32,11 @@ process_requests() ->
 process_commands(ServerPid, MyName, ClientPid) ->
     %% Read from standard input and send to server
     Text = io:get_line("-> "),
-    if 
+    if
         Text  == "exit\n" ->
-            ServerPid ! {client_leave_req, ..., ...},  %% TODO: COMPLETE
+            ServerPid ! {client_leave_req, MyName, ClientPid},
             ok;
         true ->
-            ServerPid ! {send, ..., ...},  %% TODO: COMPLETE
+            ServerPid ! {send, MyName, Text},
             process_commands(ServerPid, MyName, ClientPid)
     end.

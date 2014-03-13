@@ -22,31 +22,31 @@ process_requests(Clients, Servers) ->
     receive
         %% Messages between client and server
         {client_join_req, Name, From} ->
-            NewClients = [...|Clients],  %% TODO: COMPLETE
-            broadcast(..., {join, Name}),  %% TODO: COMPLETE
-            process_requests(..., ...);  %% TODO: COMPLETE
+            NewClients = [From|Clients],
+            broadcast(NewClients, {join, Name}),
+            process_requests(NewClients, Servers);
         {client_leave_req, Name, From} ->
-            NewClients = lists:delete(..., Clients),  %% TODO: COMPLETE
-            broadcast(..., {leave, Name}),  %% TODO: COMPLETE
+            NewClients = lists:delete(From, Clients),
+            broadcast(NewClients, {leave, Name}),
             From ! exit,
-            process_requests(..., ...);  %% TODO: COMPLETE
+            process_requests(NewClients, Servers);
         {send, Name, Text} ->
-            broadcast(Servers, ...),  %% TODO: COMPLETE
+            broadcast(Servers, {message, Name, Text}),
             process_requests(Clients, Servers);
-        
+
         %% Messages between servers
         disconnect ->
             NewServers = lists:delete(self(), Servers),
-            broadcast(..., {update_servers, NewServers}),  %% TODO: COMPLETE
+            broadcast(NewServers, {update_servers, NewServers}),
             unregister(myserver);
         {server_join_req, From} ->
-            NewServers = [...|Servers],  %% TODO: COMPLETE
-            broadcast(..., {update_servers, NewServers}),  %% TODO: COMPLETE
+            NewServers = [From|Servers],
+            broadcast(NewServers, {update_servers, NewServers}),
             process_requests(Clients, NewServers);
         {update_servers, NewServers} ->
             io:format("[SERVER UPDATE] ~w~n", [NewServers]),
-            process_requests(Clients, ...);  %% TODO: COMPLETE
-            
+            process_requests(Clients, NewServers);
+
         RelayMessage -> %% Whatever other message is relayed to its clients
             broadcast(Clients, RelayMessage),
             process_requests(Clients, Servers)
