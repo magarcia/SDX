@@ -5,6 +5,7 @@ deps
 *.beam
 *.plt
 erl_crash.dump
+ebin
 
 
 ### OSX ###
@@ -22,3 +23,7 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+
+### Custom for project ###
+Notas.md
