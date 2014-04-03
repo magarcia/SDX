@@ -1,4 +1,0 @@
-%% encoding: UTF-8
-{application,'S2'}.
-{packages,[]}.
-{modules,[gui,lock1,muty,muty_split,worker]}.
