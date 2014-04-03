@@ -1,0 +1,13 @@
+@author Martin Garcia <marti.garcia@est.fib.upc.edu>
+
+@author Matias Amandola
+
+@version 1.0.0
+
+@title Muty: a distributed mutual-exclusion lock
+
+@doc Muty is a distributed mutual-exclusion lock. The lock use a multicast
+strategy and work in an asynchronous network where we do not have access to a
+synchronized clock. Implemented in three versions: the deadlock prone,
+the unfair, and the Lamport clocked. Based in the Ricart and Agrawala mutual
+exclusion algorithm.
